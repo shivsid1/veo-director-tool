@@ -124,7 +124,7 @@ const VideoGenerator = ({ selections, selectedInspiration, sceneDescription, onG
       console.log('Using real Vertex AI API for Veo 3 video generation');
       
       // Start video generation
-      const response = await fetch('http://localhost:3001/api/generate-video', {
+      const response = await fetch('https://veo-director-backend-337593556542.us-central1.run.app/api/generate-video', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -158,7 +158,7 @@ const VideoGenerator = ({ selections, selectedInspiration, sceneDescription, onG
         
         try {
           // Check operation status
-          const statusResponse = await fetch(`http://localhost:3001/api/operation-status/${encodeURIComponent(operation)}`);
+          const statusResponse = await fetch(`https://veo-director-backend-337593556542.us-central1.run.app/api/operation-status/${encodeURIComponent(operation)}`);
           
           if (!statusResponse.ok) {
             const errorData = await statusResponse.json().catch(() => ({}));
@@ -185,7 +185,7 @@ const VideoGenerator = ({ selections, selectedInspiration, sceneDescription, onG
               
               try {
                 // Call the download endpoint to get the video details
-                const downloadResponse = await fetch(`http://localhost:3001/api/download-video/${encodeURIComponent(operation)}`);
+                const downloadResponse = await fetch(`https://veo-director-backend-337593556542.us-central1.run.app/api/download-video/${encodeURIComponent(operation)}`);
                 
                 if (!downloadResponse.ok) {
                   const errorData = await downloadResponse.json().catch(() => ({}));
