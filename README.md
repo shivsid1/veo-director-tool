@@ -1,61 +1,52 @@
-# Veo Director Tool 🎬
+# Veo Director Tool
 
-A professional video generation interface that makes cinematic language accessible through modular tile selection. Built for Google's Veo 3 API, this tool allows users to build 8-second videos by combining technical variables like equipment, movement, lighting, palette, and composition.
+A professional video generation interface for Google's Veo 3 API. This tool provides an intuitive way to construct video prompts through modular parameter selection, making cinematic language accessible to creators of all skill levels.
 
-## ✨ Features
+## Overview
 
-### 🎯 **Technical Variable Tiles**
-- **Equipment**: ARRI Pro, Vintage Film, iPhone, Security Cam
-- **Movement**: Static, Dolly, Handheld, Orbit
-- **Lighting**: Natural, Dramatic, Soft, Neon
-- **Palette**: Cool Blues, Warm Pastels, B&W, Saturated
-- **Composition**: Close-up, Medium, Wide, Aerial
+The Veo Director Tool breaks down video generation into discrete, selectable components:
+- **Scene Description**: Natural language input for video content
+- **Technical Parameters**: Equipment, movement, lighting, palette, and composition
+- **Director Presets**: Pre-configured combinations based on renowned filmmakers
 
-### 🎭 **Director Preset Shortcuts**
-- **Nolan**: Epic scale with practical effects (ARRI + Dolly + Dramatic + Cool Blues + Wide)
-- **Anderson**: Symmetrical, pastel aesthetic (Vintage + Static + Soft + Warm Pastels + Medium)
-- **Kubrick**: One-point perspective, precise framing (ARRI + Static + Dramatic + B&W + Wide)
-- **Lynch**: Surreal, neon-lit dreamscapes (Vintage + Handheld + Neon + Saturated + Close-up)
+## Features
 
-### 🎨 **Professional Interface**
-- Dark theme inspired by video production software
-- Custom color palette: video-black (#0a0a0a), video-gray (#1a1a1a), video-accent (#ff6b35), video-gold (#f7931e)
-- Responsive grid layout with hover effects and animations
-- Real-time JSON generation for Veo 3 API
+### Technical Parameter Categories
+- **Equipment**: ARRI Pro, Vintage Film, iPhone, Security Cam, RED Cinema, Film Noir, Drone Cam, Webcam
+- **Movement**: Static, Dolly, Handheld, Orbit, Push In, Pull Back, Tilt/Pan, Whip Pan
+- **Lighting**: Natural, Dramatic, Soft, Neon, Golden Hour, Harsh Sun, Candlelight, Moonlight
+- **Palette**: Cool Blues, Warm Pastels, Black & White, Saturated, Sepia Tone, Teal & Orange, Muted Earth, High Contrast
+- **Composition**: Close-up, Medium, Wide, Aerial, Dutch Angle, Over Shoulder, Bird's Eye, Worm's Eye
 
-## 🚀 Getting Started
+### Director Presets
+- **Nolan**: Epic scale with practical effects
+- **Anderson**: Symmetrical, pastel aesthetic
+- **Kubrick**: One-point perspective, precise framing
+- **Lynch**: Surreal, neon-lit dreamscapes
+- **Tarantino**: Dynamic, stylized violence
+- **Scorsese**: Gritty urban realism
+- **Spielberg**: Warm, family-friendly adventure
+- **Villeneuve**: Atmospheric, contemplative sci-fi
 
-### Prerequisites
-- Node.js 16+ 
-- npm or yarn
+## Architecture
 
-### Installation
-```bash
-# Clone the repository
-git clone <repository-url>
-cd veo-director-tool
+### Frontend
+- **React 18** with Vite build system
+- **Tailwind CSS** for styling with custom glassmorphic design
+- **Component-based architecture** with modular tile selection
+- **Real-time state management** using React hooks
 
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-### Build for Production
-```bash
-npm run build
-npm run preview
-```
-
-## 🏗️ Architecture
+### Backend
+- **Node.js/Express** server
+- **Google Cloud Run** deployment
+- **OAuth 2.0 authentication** with service account
+- **Veo 3 API integration** for video generation
 
 ### Data Structure
-The tool uses a comprehensive data structure that maps each tile selection to specific Veo 3 API parameters:
+Each tile selection maps to specific Veo 3 API parameters:
 
 ```javascript
-// Example: ARRI Pro Camera selection
-ARRI_PRO: {
+{
   veoParams: {
     shot: {
       composition: 'cinematic',
@@ -69,29 +60,63 @@ ARRI_PRO: {
 }
 ```
 
-### Component Structure
-- **App.jsx**: Main application with state management
-- **Tile.jsx**: Individual selectable parameter tiles
-- **CategorySection.jsx**: Organized groups of related tiles
-- **DirectorPresets.jsx**: Quick preset combinations
-- **JsonOutput.jsx**: Generated Veo 3 parameters display
+## Getting Started
 
-### State Management
-- React hooks for local state
-- Radio button behavior (one selection per category)
-- Real-time JSON generation when all categories are selected
+### Prerequisites
+- Node.js 16+
+- Google Cloud account with Veo 3 API access
+- npm or yarn
 
-## 🎬 How It Works
+### Installation
 
-1. **Select Tiles**: Choose one option from each technical category
-2. **Generate Parameters**: The tool automatically combines selections into structured JSON
-3. **Copy & Use**: Copy the generated JSON for use with Google's Veo 3 API
-4. **Director Presets**: Use preset buttons for quick, proven combinations
+```bash
+# Clone repository
+git clone https://github.com/shivsid1/veo-director-tool.git
+cd veo-director-tool
 
-## 🎨 Customization
+# Install dependencies
+npm install
 
-### Adding New Tiles
-To add new options, edit `src/data/videoParameters.js`:
+# Start development server
+npm run dev
+```
+
+### Production Deployment
+
+The application is deployed across two services:
+- **Frontend**: Vercel (React build)
+- **Backend**: Google Cloud Run (Node.js API)
+
+## API Endpoints
+
+- `POST /api/generate-video` - Initiate video generation
+- `GET /api/operation-status/:operationName` - Check generation status
+- `GET /api/download-video/:operationName` - Download completed video
+- `GET /api/health` - Health check
+
+## Development
+
+### Project Structure
+```
+src/
+├── components/          # React components
+│   ├── CategorySection.jsx
+│   ├── DirectorPresets.jsx
+│   ├── InspirationSection.jsx
+│   ├── SceneDescription.jsx
+│   ├── Tile.jsx
+│   └── VideoGenerator.jsx
+├── data/               # Configuration data
+│   ├── prompt-fragments.js
+│   ├── tile-mappings.js
+│   └── videoParameters.js
+├── App.jsx            # Main application
+└── main.jsx           # Entry point
+```
+
+### Adding New Parameters
+
+To add new tiles or categories, modify `src/data/videoParameters.js`:
 
 ```javascript
 export const NEW_CATEGORY_TILES = {
@@ -107,59 +132,32 @@ export const NEW_CATEGORY_TILES = {
 };
 ```
 
-### Modifying Colors
-Update `tailwind.config.js` to change the color scheme:
+## Configuration
 
-```javascript
-colors: {
-  'video-black': '#your-color',
-  'video-accent': '#your-accent',
-  // ... other colors
-}
-```
+### Environment Variables
+- `GOOGLE_SERVICE_ACCOUNT_KEY` - Google Cloud service account JSON
+- `PORT` - Server port (default: 3001)
 
-## 🔧 Technical Stack
+### Google Cloud Setup
+1. Create a Google Cloud project
+2. Enable the Veo 3 API
+3. Create a service account with AI Platform User role
+4. Generate and configure service account key
 
-- **Frontend**: React 18 + Vite
-- **Styling**: Tailwind CSS with custom video production theme
-- **State Management**: React Hooks
-- **Build Tool**: Vite
-- **Package Manager**: npm
-
-## 📱 Responsive Design
-
-- Mobile-first approach
-- Grid layouts that adapt to screen size
-- Touch-friendly tile selection
-- Optimized for both desktop and mobile video production workflows
-
-## 🚀 Future Enhancements
-
-- [ ] Integration with actual Veo 3 API
-- [ ] Video preview generation
-- [ ] Custom prompt input fields
-- [ ] Export/import of tile combinations
-- [ ] Advanced cinematography parameters
-- [ ] User accounts and saved presets
-
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
-- Inspired by professional video production software like Blackmagic DaVinci Resolve
 - Built for Google's Veo 3 API
-- Designed to make cinematic language accessible to creators of all skill levels
-
----
-
-**Built with ❤️ for the video production community**
+- Inspired by professional video production workflows
+- Designed to make cinematic language accessible to all creators
