@@ -4,7 +4,8 @@ import https from 'https';
 import cors from 'cors';
 
 const app = express();
-const PORT = 3001;
+// Use Cloud Run's PORT environment variable or fallback to 3001 for local development
+const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
@@ -16,17 +17,18 @@ const LOCATION = 'us-central1';
 const MODEL_ID = 'veo-3.0-generate-001';
 
 // Function to get Google Cloud access token
-function getAccessToken() {
+async function getAccessToken() {
   try {
     // Try service account first (for production)
     if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
       const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
-      const { GoogleAuth } = require('google-auth-library');
+      const { GoogleAuth } = await import('google-auth-library');
       const auth = new GoogleAuth({
         credentials: serviceAccount,
         scopes: ['https://www.googleapis.com/auth/cloud-platform']
       });
-      return auth.getAccessToken();
+      const token = await auth.getAccessToken();
+      return token;
     }
     
     // Fallback to CLI auth (for local development)
@@ -82,7 +84,7 @@ app.post('/api/generate-video', async (req, res) => {
     console.log('🎬 Starting Veo 3 video generation...');
     console.log('📝 Prompt:', prompt);
     
-    const token = getAccessToken();
+    const token = await getAccessToken();
     console.log('✅ Got access token');
     
     const url = `https://${LOCATION}-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL_ID}:predictLongRunning`;
@@ -151,7 +153,7 @@ app.get('/api/operation-status/:operationName', async (req, res) => {
     operationName = decodeURIComponent(operationName);
     console.log('🔍 Checking operation status for:', operationName);
     
-    const token = getAccessToken();
+    const token = await getAccessToken();
     
     // For Veo API, we need to use the :fetchPredictOperation endpoint
     // Extract the model and operation parts
@@ -236,7 +238,7 @@ app.get('/api/download-video/:operationName', async (req, res) => {
     operationName = decodeURIComponent(operationName);
     console.log('📥 Downloading video for operation:', operationName);
     
-    const token = getAccessToken();
+    const token = await getAccessToken();
     
     // First check the operation status to get the GCS path
     const operationMatch = operationName.match(/models\/([^\/]+)\/operations\/([^\/]+)/);
@@ -367,7 +369,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Veo Director Tool API server running on port ${PORT}`);
   console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🎬 Video generation: POST http://localhost:${PORT}/api/generate-video`);
