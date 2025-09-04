@@ -18,6 +18,18 @@ const MODEL_ID = 'veo-3.0-generate-001';
 // Function to get Google Cloud access token
 function getAccessToken() {
   try {
+    // Try service account first (for production)
+    if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
+      const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+      const { GoogleAuth } = require('google-auth-library');
+      const auth = new GoogleAuth({
+        credentials: serviceAccount,
+        scopes: ['https://www.googleapis.com/auth/cloud-platform']
+      });
+      return auth.getAccessToken();
+    }
+    
+    // Fallback to CLI auth (for local development)
     const token = execSync('gcloud auth print-access-token', { encoding: 'utf8' }).trim();
     return token;
   } catch (error) {
